@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,6 +23,16 @@ class ActionType
      */
     private $name;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\FileDetail", mappedBy="actionType")
+     */
+    private $fileDetails;
+
+    public function __construct()
+    {
+        $this->fileDetails = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -34,6 +46,37 @@ class ActionType
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FileDetail[]
+     */
+    public function getFileDetails(): Collection
+    {
+        return $this->fileDetails;
+    }
+
+    public function addFileDetail(FileDetail $fileDetail): self
+    {
+        if (!$this->fileDetails->contains($fileDetail)) {
+            $this->fileDetails[] = $fileDetail;
+            $fileDetail->setActionType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFileDetail(FileDetail $fileDetail): self
+    {
+        if ($this->fileDetails->contains($fileDetail)) {
+            $this->fileDetails->removeElement($fileDetail);
+            // set the owning side to null (unless already changed)
+            if ($fileDetail->getActionType() === $this) {
+                $fileDetail->setActionType(null);
+            }
+        }
 
         return $this;
     }

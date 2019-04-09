@@ -36,6 +36,16 @@ class Person
      */
     private $gender;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Patient", mappedBy="person", cascade={"persist", "remove"})
+     */
+    private $patient;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Therapist", mappedBy="person", cascade={"persist", "remove"})
+     */
+    private $therapist;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -85,6 +95,40 @@ class Person
     public function setGender(?string $gender): self
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(Patient $patient): self
+    {
+        $this->patient = $patient;
+
+        // set the owning side of the relation if necessary
+        if ($this !== $patient->getPerson()) {
+            $patient->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function getTherapist(): ?Therapist
+    {
+        return $this->therapist;
+    }
+
+    public function setTherapist(Therapist $therapist): self
+    {
+        $this->therapist = $therapist;
+
+        // set the owning side of the relation if necessary
+        if ($this !== $therapist->getPerson()) {
+            $therapist->setPerson($this);
+        }
 
         return $this;
     }

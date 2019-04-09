@@ -31,6 +31,12 @@ class Data
      */
     private $latitude;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\FileDetail", inversedBy="data")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $fileDetail;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,6 +74,18 @@ class Data
     public function setLatitude(float $latitude): self
     {
         $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getFileDetail(): ?FileDetail
+    {
+        return $this->fileDetail;
+    }
+
+    public function setFileDetail(?FileDetail $fileDetail): self
+    {
+        $this->fileDetail = $fileDetail;
 
         return $this;
     }
