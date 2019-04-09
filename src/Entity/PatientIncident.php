@@ -5,9 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\DataRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PatientIncidentRepository")
  */
-class Data
+class PatientIncident
 {
     /**
      * @ORM\Id()
@@ -32,7 +32,7 @@ class Data
     private $latitude;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\FileDetail", inversedBy="data")
+     * @ORM\ManyToOne(targetEntity="App\Entity\FileDetail", inversedBy="patientIncident")
      * @ORM\JoinColumn(nullable=false)
      */
     private $fileDetail;

@@ -36,13 +36,13 @@ class FileDetail
     private $actionType;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Data", mappedBy="fileDetail")
+     * @ORM\OneToMany(targetEntity="App\Entity\PatientIncident", mappedBy="fileDetail")
      */
-    private $data;
+    private $patientIncident;
 
     public function __construct()
     {
-        $this->data = new ArrayCollection();
+        $this->patientIncident = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,30 +87,30 @@ class FileDetail
     }
 
     /**
-     * @return Collection|Data[]
+     * @return Collection|PatientIncident[]
      */
-    public function getData(): Collection
+    public function getPatientIncident(): Collection
     {
-        return $this->data;
+        return $this->patientIncident;
     }
 
-    public function addData(Data $data): self
+    public function addPatientIncident(PatientIncident $patientIncident): self
     {
-        if (!$this->data->contains($data)) {
-            $this->data[] = $data;
-            $data->setFileDetail($this);
+        if (!$this->patientIncident->contains($patientIncident)) {
+            $this->patientIncident[] = $patientIncident;
+            $patientIncident->setFileDetail($this);
         }
 
         return $this;
     }
 
-    public function removeData(Data $data): self
+    public function removePatientIncident(PatientIncident $patientIncident): self
     {
-        if ($this->data->contains($data)) {
-            $this->data->removeElement($data);
+        if ($this->patientIncident->contains($patientIncident)) {
+            $this->patientIncident->removeElement($patientIncident);
             // set the owning side to null (unless already changed)
-            if ($data->getFileDetail() === $this) {
-                $data->setFileDetail(null);
+            if ($patientIncident->getFileDetail() === $this) {
+                $patientIncident->setFileDetail(null);
             }
         }
 
