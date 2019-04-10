@@ -30,7 +30,6 @@ class TherapistService
     {
         $this->em = $entityManager;
         $this->serializer = $serializer;
-        $this->validator = $validator;
     }
 
    /**
@@ -70,7 +69,6 @@ class TherapistService
         $therapist = new Therapist();
         $therapist->setEmail($email)
             ->setPassword($password);
-
         $this->em->persist($therapist);
 
         $this->em->flush();

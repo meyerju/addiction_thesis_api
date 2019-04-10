@@ -30,7 +30,6 @@ class PatientService
     {
         $this->em = $entityManager;
         $this->serializer = $serializer;
-        $this->validator = $validator;
     }
 
     /**
