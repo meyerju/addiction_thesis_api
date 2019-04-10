@@ -4,7 +4,6 @@ namespace App\Utils;
 
 use App\Entity\Therapist;
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -18,18 +17,13 @@ class TherapistService
      */
     protected $em;
 
-    /** @var Serializer $serializer */
-    private $serializer;
-
     /**
      * TherapistService constructor.
      * @param EntityManagerInterface $entityManager
-     * @param Serializer $serializer
      */
-    public function __construct(EntityManagerInterface $entityManager, Serializer $serializer)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
-        $this->serializer = $serializer;
     }
 
    /**
@@ -55,11 +49,11 @@ class TherapistService
     }
 
     /**
-     * @param any $content
+     * @param array $content
      * @return array
      * @throws \Exception
      */
-    public function create(any $content)
+    public function create(array $content)
     {
         $therapist = $this->em->getRepository(Therapist::class)->findOneByEmail($content['email']);
         if ($therapist instanceof Therapist) {
@@ -67,7 +61,7 @@ class TherapistService
         }
         $therapist = new Therapist();
         $therapist->setEmail($content['email'])
-            ->setPassword(json_encode($content['password']));
+            ->setPassword($content['password']);
         $this->em->persist($therapist);
 
         $this->em->flush();

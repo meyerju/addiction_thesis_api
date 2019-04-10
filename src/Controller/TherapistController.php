@@ -54,7 +54,11 @@ class TherapistController extends Controller
         $jsonContent = $request->getContent();
         $content = json_decode($jsonContent,true);
 
-        $therapist = $service->create($content);
-        return new Response($therapist);
+        try{
+            $therapist = $service->create($content);
+        } catch (\Exception $exception) {
+            return new Response($exception->getMessage(), $exception->getCode()>=Response::HTTP_BAD_REQUEST ? $exception->getCode() : Response::HTTP_BAD_REQUEST);
+        }
+        return new Response(json_encode($therapist));
     }
 }

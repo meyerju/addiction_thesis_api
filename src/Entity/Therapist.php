@@ -27,12 +27,14 @@ class Therapist
     
     /**
      * @var string
+     * @ORM\Column(type="string", length=255)
      * @Groups({"FullTherapist"})
      */
     protected $password;
 
     /**
      * @var string
+     * @ORM\Column(type="string", length=255)
      * @Groups({"FullTherapist"})
      */
     protected $email;
@@ -44,7 +46,6 @@ class Therapist
 
     public function __construct()
     {
-        parent::__construct();
         $this->patients = new ArrayCollection();
     }
 
@@ -57,6 +58,37 @@ class Therapist
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set password.
+     *
+     * @param $password
+     * @return $this
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Set email.
+     *
+     * @param $email
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
 
         return $this;
     }
