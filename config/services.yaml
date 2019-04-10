@@ -25,13 +25,3 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    patient_service:
-        class: App\Utils\PatientService
-        arguments: ['@doctrine.orm.entity_manager', '@jms_serializer']
-        public: true
-    
-    therapist_service:
-        class: App\Utils\TherapistService
-        arguments: ['@doctrine.orm.entity_manager', '@jms_serializer']
-        public: true

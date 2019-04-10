@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Utils\TherapistService;
 use App\Entity\Therapist;
 
 /**
@@ -23,13 +24,13 @@ class TherapistController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function loginAction(Request $request)
+    public function loginAction(Request $request, TherapistService $service)
     {
         $email = $request->request->get('email');
         $password = $request->request->get('password');
 
         try {
-            $therapist = $this->container->get('therapist_service')->login($email, $password);
+            $therapist = $service->login($email, $password);
         } catch (\Exception $exception) {
             return new Response($exception->getMessage(), Response::HTTP_FORBIDDEN);
         }
@@ -45,11 +46,15 @@ class TherapistController extends Controller
      * @Route("/therapists", methods={"PUT"})
      *     
      * @param Request $request
+     * @param TherapistService $service
      * @return Response
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, TherapistService $service)
     {
-        $therapist = $this->get('therapist_service')->initialize($username, $password);
+        $jsonContent = $request->getContent();
+        $content = json_decode($jsonContent,true);
+
+        $therapist = $service->create($content);
         return new Response($therapist);
     }
 }

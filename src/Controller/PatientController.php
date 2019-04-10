@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Utils\PatientService;
 
 /**
  * Class PatientController
@@ -23,10 +24,10 @@ class PatientController extends Controller
      *
      * @return Response
      */
-    public function getAllAction()
+    public function getAllAction(PatientService $service)
     {
         $therapist = $this->getTherapist();
-        $patients = $this->get('patient_service')->findAll($therapist);
+        $patients = $service->findAll($therapist);
 
         $patients = $this->get('jms_serializer')
             ->serialize($patients, 'json', SerializationContext::create()->setGroups(['FullPatient'])->setSerializeNull(true));

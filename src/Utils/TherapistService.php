@@ -55,20 +55,19 @@ class TherapistService
     }
 
     /**
-     * @param string $email
-     * @param string $password
+     * @param any $content
      * @return array
      * @throws \Exception
      */
-    public function create(string $email, string $password)
+    public function create(any $content)
     {
-        $therapist = $this->em->getRepository(Therapist::class)->findOneByEmail($email);
+        $therapist = $this->em->getRepository(Therapist::class)->findOneByEmail($content['email']);
         if ($therapist instanceof Therapist) {
             throw new \Exception("Email already used.", Response::HTTP_BAD_REQUEST);
         }
         $therapist = new Therapist();
-        $therapist->setEmail($email)
-            ->setPassword($password);
+        $therapist->setEmail($content['email'])
+            ->setPassword(json_encode($content['password']));
         $this->em->persist($therapist);
 
         $this->em->flush();
