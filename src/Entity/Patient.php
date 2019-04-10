@@ -34,9 +34,15 @@ class Patient
      */
     private $files;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Therapist", inversedBy="patients")
+     */
+    private $therapists;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
+        $this->therapist = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,6 +100,34 @@ class Patient
             if ($file->getPatient() === $this) {
                 $file->setPatient(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Therapist[]
+     */
+    public function getTherapists(): Collection
+    {
+        return $this->therapists;
+    }
+
+    public function addTherapist(Therapist $therapist): self
+    {
+        if (!$this->therapists->contains($therapist)) {
+            $this->therapists[] = $therapist;
+            $therapist->addTherapist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTherapist(Therapist $therapist): self
+    {
+        if ($this->therapists->contains($therapist)) {
+            $this->therapists->removeElement($therapist);
+            $therapist->removeTherapist($this);
         }
 
         return $this;
