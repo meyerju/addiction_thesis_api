@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^1.10",
+        "friendsofsymfony/rest-bundle": "^2.5",
         "jms/serializer-bundle": "^3.2",
         "nelmio/cors-bundle": "^1.5",
         "phpoffice/phpspreadsheet": "^1.6",

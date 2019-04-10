@@ -7,8 +7,8 @@ use JMS\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Api\Entity\Therapist;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Therapist;
 
 /**
  * Class TherapistController
@@ -18,7 +18,7 @@ class TherapistController extends Controller
 {
 
     /**
-     * @Rest\Post("/login", name="therapist_login")
+     * @Route("/login", methods={"POST"})
      *     *
      * @param Request $request
      * @return Response
@@ -39,5 +39,17 @@ class TherapistController extends Controller
         
         $therapistJson = $serializer->serialize($therapist, 'json', SerializationContext::create()->setGroups(['FullTherapist'])->setSerializeNull(true));
         return new Response($therapistJson);
+    }
+
+    /**
+     * @Route("/therapists", methods={"PUT"})
+     *     
+     * @param Request $request
+     * @return Response
+     */
+    public function addAction(Request $request)
+    {
+        $therapist = $this->get('therapist_service')->initialize($username, $password);
+        return new Response($therapist);
     }
 }

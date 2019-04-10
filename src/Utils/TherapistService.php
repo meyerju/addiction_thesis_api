@@ -46,7 +46,6 @@ class TherapistService
         $therapist = $repository->findOneBy([
             'email' => $email,
             'password' => $password,
-            'enabled' => 1
         ]);
 
         if (!($therapist instanceof Therapist)) {
@@ -54,5 +53,27 @@ class TherapistService
         }
 
         return $therapist;
+    }
+
+    /**
+     * @param string $email
+     * @param string $password
+     * @return array
+     * @throws \Exception
+     */
+    public function create(string $email, string $password)
+    {
+        $therapist = $this->em->getRepository(Therapist::class)->findOneByEmail($email);
+        if ($therapist instanceof Therapist) {
+            throw new \Exception("Email already used.", Response::HTTP_BAD_REQUEST);
+        }
+        $therapist = new Therapist();
+        $therapist->setEmail($email)
+            ->setPassword($password);
+
+        $this->em->persist($therapist);
+
+        $this->em->flush();
+        return ["therapist_id" => $therapist->getId()];
     }
 }
