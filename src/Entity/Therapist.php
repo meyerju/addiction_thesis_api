@@ -40,12 +40,28 @@ class Therapist
     protected $email;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     */
+    protected $enabled;
+
+    /**
+     * The salt to use for hashing.
+     *
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $salt;
+
+
+    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Patient", mappedBy="therapist")
      */
     private $patients;
 
     public function __construct()
     {
+        $this->enabled = false;
         $this->patients = new ArrayCollection();
     }
 
@@ -65,6 +81,19 @@ class Therapist
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+
+    /**
+     * Set enabled.
+     *
+     * @param $enabled
+     * @return $this
+     */
+    public function setEnabled($boolean)
+    {
+        $this->enabled = (bool) $boolean;
+        return $this;
     }
 
     /**
@@ -91,6 +120,39 @@ class Therapist
         $this->email = $email;
 
         return $this;
+    }
+
+    /**
+     * Get email.
+     *
+     * @return $email
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set salt.
+     *
+     * @param $salt
+     * @return $this
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Get salt.
+     *
+     * @return $salt
+     */
+    public function getSalt()
+    {
+        return $this->salt;
     }
 
     /**
