@@ -1,0 +1,35 @@
+security:
+    encoders:
+        App\Entity\Therapist\Therapist:
+            algorithm: sha512
+
+    providers:
+        entity_provider:
+            entity:
+                class: App\Entity\Therapist\Therapist
+                property: email
+
+    firewalls:
+        dev:
+            pattern:    ^/(_(profiler|wdt)|css|images|js)/
+            security:   false
+
+        # tester
+        tester_initialize:
+            pattern:    ^/api/wsse/initialize
+            security:   false
+        tester_salt:
+            pattern:    ^/api/wsse/salt
+            security:   false
+        tester_login:
+            pattern:    ^/api/wsse/login
+            security:   false
+
+        #WSSE
+        wsse_secured:
+            pattern:    ^/api/
+            stateless:  true
+            wsse:       true
+            anonymous:  false
+            methods:    [GET, PUT, POST, DELETE, OPTIONS]
+            provider:   entity_provider
