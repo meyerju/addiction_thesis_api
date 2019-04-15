@@ -38,7 +38,7 @@ class TherapistService
         if (!$therapistSaved instanceof Therapist) {
             throw new \Exception("The therapist with email " . $therapist->getEmail() . " has been not preconfigured. You need to ask 
             the salt for this email beforehand.");
-        } elseif ($therapistSaved->isEnabled()) {
+        } elseif ($therapistSaved->getEnabled()) {
             throw new \Exception("The therapist with email " . $therapist->getEmail() . " has already been added");
         }
 
@@ -102,7 +102,7 @@ class TherapistService
     public function login(array $content)
     {
         $repository = $this->em->getRepository(Therapist::class);
-
+        dump($content);
         $therapist = $repository->findOneBy([
             'email' => $content['email'],
             'password' => $content['saltedPassword'],
@@ -110,7 +110,7 @@ class TherapistService
         ]);
 
         if (!($therapist instanceof Therapist)) {
-            throw new \Exception('Bad credentials (email: ' . $email . ')', Response::HTTP_BAD_REQUEST);
+            throw new \Exception('Bad credentials (email: ' .$content['email'] . ')', Response::HTTP_BAD_REQUEST);
         }
 
         return $therapist;

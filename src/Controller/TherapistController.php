@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Utils\TherapistService;
 use App\Entity\Therapist;
 
@@ -91,7 +92,7 @@ class TherapistController extends Controller
 
         $jsonContent = $request->getContent();
         $therapist = json_decode($jsonContent,true);
-        $therapistata = $therapist;
+        $therapistData = $therapist;
 
         try {
             $therapist = $serializer->deserialize($request->getContent(), Therapist::class, 'json');
@@ -101,7 +102,7 @@ class TherapistController extends Controller
                 return new JsonResponse($therapist);
             }
 
-            $utherapistJson = $serializer->serialize(
+            $therapistJson = $serializer->serialize(
                 $return,
                 'json',
                 SerializationContext::create()->setGroups(['FullTherapist'])->setSerializeNull(true)

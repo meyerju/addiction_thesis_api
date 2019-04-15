@@ -65,6 +65,7 @@
         }
     },
     "require-dev": {
+        "symfony/var-dumper": "4.2.*",
         "symfony/web-server-bundle": "4.2.*"
     }
 }

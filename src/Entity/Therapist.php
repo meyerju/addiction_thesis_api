@@ -97,6 +97,16 @@ class Therapist
     }
 
     /**
+     * Get enabled.
+     *
+     * @return $enabled
+     */
+    public function getEnabled(): ?bool
+    {
+        return $this->enabled ;
+    }
+
+    /**
      * Set password.
      *
      * @param $password
