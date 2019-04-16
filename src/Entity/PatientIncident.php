@@ -22,12 +22,12 @@ class PatientIncident
     private $date;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $longitude;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $latitude;
 
@@ -36,6 +36,14 @@ class PatientIncident
      * @ORM\JoinColumn(nullable=false)
      */
     private $fileDetail;
+
+    function __construct($date, $latitude, $longitude, $fileDetail)
+    {
+        $this->setDate($date);
+        $this->setLatitude($latitude);
+        $this->setLongitude($longitude);
+        $this->setFileDetail($fileDetail);
+    }
 
     public function getId(): ?int
     {
@@ -59,7 +67,7 @@ class PatientIncident
         return $this->longitude;
     }
 
-    public function setLongitude(float $longitude): self
+    public function setLongitude(?float $longitude): ?self
     {
         $this->longitude = $longitude;
 
@@ -71,7 +79,7 @@ class PatientIncident
         return $this->latitude;
     }
 
-    public function setLatitude(float $latitude): self
+    public function setLatitude(?float $latitude): ?self
     {
         $this->latitude = $latitude;
 

@@ -28,8 +28,9 @@ class ActionType
      */
     private $fileDetails;
 
-    public function __construct()
+    public function __construct($name)
     {
+        $this->setName($name);
         $this->fileDetails = new ArrayCollection();
     }
 

@@ -29,11 +29,9 @@ class PatientIncidentController extends Controller
     {
         $uploadedFile = $request->files->get('file');
         if($uploadedFile){
-            $uploadedItem = new UploadedItem($uploadedFile);
-
             try
             {
-                $changes = $service->load($uploadedItem,$uploadedFile->getClientOriginalName());
+                $changes = $service->load($uploadedFile);
             }
             catch (\Exception $exception)
             {

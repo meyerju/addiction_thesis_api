@@ -40,8 +40,11 @@ class FileDetail
      */
     private $patientIncident;
 
-    public function __construct()
+    public function __construct($name, $actionType, $file)
     {
+        $this->setName($name);
+        $this->setFile($file);
+        $this->setActionType($actionType);
         $this->patientIncident = new ArrayCollection();
     }
 

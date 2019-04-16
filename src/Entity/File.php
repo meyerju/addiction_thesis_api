@@ -39,8 +39,11 @@ class File
      */
     private $fileDetails;
 
-    public function __construct()
+    public function __construct($name, $upload_date, $patient)
     {
+        $this->setName($name);
+        $this->setUploadDate($upload_date);
+        $this->setPatient($patient);
         $this->fileDetails = new ArrayCollection();
     }
 

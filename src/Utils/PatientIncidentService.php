@@ -11,6 +11,11 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use App\Entity\UploadedItem;
+use App\Entity\PatientIncident;
+use App\Entity\ActionType;
+use App\Entity\FileDetail;
+use App\Entity\File;
+use App\Entity\Patient;
 
 /**
  * Class PatientIncidentService
@@ -30,12 +35,11 @@ class PatientIncidentService
     private $spreadsheet;
 
     private $mappingColumns = [
-        "date" => '0',
-        "hour" => '1',
-        "action_type" => '2',
-        "file_detail" => '3',
-        "latitude" => '4',
-        "longitude" => '5',
+        "date" => 'A',
+        "action_type" => 'B',
+        "file_detail" => 'C',
+        "latitude" => 'D',
+        "longitude" => 'E',
     ];
 
     /**
@@ -48,32 +52,18 @@ class PatientIncidentService
     }
 
     /**
-        *
-     * @param UploadedItem $uploadedItem
-     * @param $filename
      * @return array
      * @throws \Exception
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    function load(UploadedItem $uploadedItem, $filename)
+    function load($uploadedFile)
     {
-        $this->guessReader($filename);
-        try
-        {
-            dump('1');
-            $this->reader->setReadDataOnly(true);
-            dump($this->reader);
-            $this->spreadsheet = $this->reader->load($uploadedItem->getFile()->getRealPath());
-        }
-        catch (\Exception $exception)
-        {
-            throw new \Exception("Ce fichier ({$uploadedItem->getCodifiedFileName()}) n'est pas lisible par l'application");
-        }
+        $this->guessReader($uploadedFile->getClientOriginalName());
+        $this->reader->setReadDataOnly(true);
+        $this->spreadsheet = $this->reader->load($uploadedFile->getRealPath());   
         $returnArray = [];
         $sheet = $this->spreadsheet->getAllSheets()[0];
-        throw new \Exception("Ce fichier n");
-        $sheet->unfreezePane();
-        $returnArray[] = $this->savePatientIncidents($sheet);
+        $returnArray[] = $this->savePatientIncidents($sheet, $uploadedFile);
         unset($sheet);        
       
         return $returnArray;
@@ -82,78 +72,62 @@ class PatientIncidentService
 
     /**
      * @param Worksheet $worksheet
-     * @return array|string
      */
-    public function savePatientIncidents(Worksheet $worksheet)
+    public function savePatientIncidents(Worksheet $worksheet, $uploadedFile)
     {
-        dump($worksheet);
-        $fileContent = $donneeBruteMapping->getFileContent();
-        unset($donneeBruteMapping);
-        $arrayFileContent = explode("\n", $fileContent);
-        unset($fileContent);
-        $codesDonneesBrutes = [];
-        foreach ($arrayFileContent as $row)
+        $array = $worksheet->toArray(null, true, true, true);
+        $count = 0;
+
+        $patient = $this->em->getRepository(Patient::class)
+            ->findOneBy([
+                'id' => 1,
+            ]);
+
+        $file = new File($uploadedFile->getClientOriginalName(), new \DateTime(), $patient);//find patient
+        $this->em->persist($file);    
+
+        
+        foreach ($array as $key => $row)
         {
-            $arrayRow = explode(",", $row);
-
-            if (array_key_exists($this->mappingColumns['fileCode'], $arrayRow)
-                && $codifiedFileName === $arrayRow[$this->mappingColumns['fileCode']])
-            {
-                if ('' === $arrayRow[$this->mappingColumns['feuille']]
-                    || intval($numeroSheet) === intval($arrayRow[$this->mappingColumns['feuille']]))
-                {
-                    $codesDonneesBrutes[$arrayRow[$this->mappingColumns['code']]] = [];
-
-                    foreach ($this->mappingColumns as $name => $column)
-                    {
-                        $codesDonneesBrutes[$arrayRow[$this->mappingColumns['code']]][$name] = $arrayRow[$column];
-                    }
-                }
+            if($key === 1){//first line
+                continue;
             }
+
+            dump($row);
+            $actionTypeName = $row[$this->mappingColumns['action_type']];
+            $actionType = $this->em->getRepository(ActionType::class)
+            ->findOneBy([
+                'name' => $actionTypeName,
+            ]);
+
+            if (!$actionType instanceof ActionType)
+            {
+                $actionType = new ActionType($actionTypeName);
+                $this->em->persist($actionType);
+            }
+
+            $fileDetailName = $row[$this->mappingColumns['file_detail']];
+            $fileDetail = $this->em->getRepository(FileDetail::class)
+            ->findOneBy([
+                'name' => $fileDetailName,
+                'actionType' => $actionType,
+            ]);
+
+            if (!$fileDetail instanceof FileDetail)
+            {
+                $fileDetail = new FileDetail($fileDetailName,$actionType, $file);
+                $this->em->persist($fileDetail);
+            }
+            $date = new \DateTime();
+            $date->setTimestamp($row[$this->mappingColumns['date']]);
+            $latitude = $row[$this->mappingColumns['latitude']];
+            $longitude = $row[$this->mappingColumns['longitude']];
+
+            $patientIncident = new PatientIncident($date, $latitude, $longitude, $fileDetail);
+            $this->em->persist($patientIncident);
+
         }
-
-        $changes = [];
-        foreach ($incidents as $codifiedNameCode => $mapping)
-        {
-            $code = $this->saveCode($mapping, $codifiedNameCode, $crudManager);
-            $row = $mapping['ligne'];
-            $columns = $mapping['colonnes'];
-            // Récupération du centre de soin de la ligne
-            try
-            {
-                $value = $this->calculValue($code, $worksheet, $columns, $row);
-            }
-            catch (\Exception $exception)
-            {
-                return "{$codifiedNameCode} : " . $exception->getMessage();
-            }
-            if (null === $value || "" === $value)
-                $value = 0;
-    
-            $oldDonneeBrute = $this->em->getRepository(DonneeBrute::class)
-                ->findOneBy([
-                    'code' => $code,
-                    'careCenter' => $careCenter,
-                    'periode' => $periode
-                ]);
-    
-            if (!$oldDonneeBrute instanceof DonneeBrute)
-            {
-                $oldDonneeBrute = new DonneeBrute($code, $value, $periode, $type);
-                $oldDonneeBrute->setCareCenter($careCenter);
-            }
-            else
-            {
-                $oldDonneeBrute->setValue($value);
-            }
-    
-            $this->em->persist($oldDonneeBrute);
-            $this->em->flush();
-    
-            $changes[] = "La donnée brute {$codifiedNameCode} a été lié à 1 centre de soin.";
-        }
-
-        return $changes;
+        $this->em->flush();
     }
 
     /**
