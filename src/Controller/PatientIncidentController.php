@@ -27,21 +27,18 @@ class PatientIncidentController extends Controller
      */
     function loadAction(Request $request, PatientIncidentService $service)
     {
-        dump($request);
         $uploadedFile = $request->files->get('file');
-        dump($uploadedFile);
         if($uploadedFile){
             $uploadedItem = new UploadedItem($uploadedFile);
 
             try
             {
-                $changes = $service->load($uploadedItem,"ghjk-xlsx");
+                $changes = $service->load($uploadedItem,$uploadedFile->getClientOriginalName());
             }
             catch (\Exception $exception)
             {
                 return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
             }    
-
             return new Response(json_encode($changes));
         }else{       
             return new Response("No file", Response::HTTP_BAD_REQUEST);

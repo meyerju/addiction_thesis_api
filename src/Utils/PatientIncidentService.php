@@ -9,6 +9,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use App\Entity\UploadedItem;
 
 /**
@@ -56,23 +57,25 @@ class PatientIncidentService
      */
     function load(UploadedItem $uploadedItem, $filename)
     {
-        dump($uploadedItem,$filename);
         $this->guessReader($filename);
         try
         {
+            dump('1');
             $this->reader->setReadDataOnly(true);
+            dump($this->reader);
             $this->spreadsheet = $this->reader->load($uploadedItem->getFile()->getRealPath());
         }
         catch (\Exception $exception)
         {
             throw new \Exception("Ce fichier ({$uploadedItem->getCodifiedFileName()}) n'est pas lisible par l'application");
         }
-        $sheet = $this->spreadsheet->getAllSheets()[0];
         $returnArray = [];
+        $sheet = $this->spreadsheet->getAllSheets()[0];
+        throw new \Exception("Ce fichier n");
         $sheet->unfreezePane();
         $returnArray[] = $this->savePatientIncidents($sheet);
-        unset($sheet);   
-             
+        unset($sheet);        
+      
         return $returnArray;
     }
 
@@ -84,74 +87,73 @@ class PatientIncidentService
     public function savePatientIncidents(Worksheet $worksheet)
     {
         dump($worksheet);
-        // $fileContent = $donneeBruteMapping->getFileContent();
-        // unset($donneeBruteMapping);
-        // $arrayFileContent = explode("\n", $fileContent);
-        // unset($fileContent);
-        // $codesDonneesBrutes = [];
-        // foreach ($arrayFileContent as $row)
-        // {
-        //     $arrayRow = explode(",", $row);
+        $fileContent = $donneeBruteMapping->getFileContent();
+        unset($donneeBruteMapping);
+        $arrayFileContent = explode("\n", $fileContent);
+        unset($fileContent);
+        $codesDonneesBrutes = [];
+        foreach ($arrayFileContent as $row)
+        {
+            $arrayRow = explode(",", $row);
 
-        //     if (array_key_exists($this->mappingColumns['fileCode'], $arrayRow)
-        //         && $codifiedFileName === $arrayRow[$this->mappingColumns['fileCode']])
-        //     {
-        //         if ('' === $arrayRow[$this->mappingColumns['feuille']]
-        //             || intval($numeroSheet) === intval($arrayRow[$this->mappingColumns['feuille']]))
-        //         {
-        //             $codesDonneesBrutes[$arrayRow[$this->mappingColumns['code']]] = [];
+            if (array_key_exists($this->mappingColumns['fileCode'], $arrayRow)
+                && $codifiedFileName === $arrayRow[$this->mappingColumns['fileCode']])
+            {
+                if ('' === $arrayRow[$this->mappingColumns['feuille']]
+                    || intval($numeroSheet) === intval($arrayRow[$this->mappingColumns['feuille']]))
+                {
+                    $codesDonneesBrutes[$arrayRow[$this->mappingColumns['code']]] = [];
 
-        //             foreach ($this->mappingColumns as $name => $column)
-        //             {
-        //                 $codesDonneesBrutes[$arrayRow[$this->mappingColumns['code']]][$name] = $arrayRow[$column];
-        //             }
-        //         }
-        //     }
-        // }
+                    foreach ($this->mappingColumns as $name => $column)
+                    {
+                        $codesDonneesBrutes[$arrayRow[$this->mappingColumns['code']]][$name] = $arrayRow[$column];
+                    }
+                }
+            }
+        }
 
-        // $changes = [];
-        // foreach ($incidents as $codifiedNameCode => $mapping)
-        // {
-        //     $code = $this->saveCode($mapping, $codifiedNameCode, $crudManager);
-        //     $row = $mapping['ligne'];
-        //     $columns = $mapping['colonnes'];
-        //     // Récupération du centre de soin de la ligne
-        //     try
-        //     {
-        //         $value = $this->calculValue($code, $worksheet, $columns, $row);
-        //     }
-        //     catch (\Exception $exception)
-        //     {
-        //         return "{$codifiedNameCode} : " . $exception->getMessage();
-        //     }
-        //     if (null === $value || "" === $value)
-        //         $value = 0;
+        $changes = [];
+        foreach ($incidents as $codifiedNameCode => $mapping)
+        {
+            $code = $this->saveCode($mapping, $codifiedNameCode, $crudManager);
+            $row = $mapping['ligne'];
+            $columns = $mapping['colonnes'];
+            // Récupération du centre de soin de la ligne
+            try
+            {
+                $value = $this->calculValue($code, $worksheet, $columns, $row);
+            }
+            catch (\Exception $exception)
+            {
+                return "{$codifiedNameCode} : " . $exception->getMessage();
+            }
+            if (null === $value || "" === $value)
+                $value = 0;
     
-        //     $oldDonneeBrute = $this->em->getRepository(DonneeBrute::class)
-        //         ->findOneBy([
-        //             'code' => $code,
-        //             'careCenter' => $careCenter,
-        //             'periode' => $periode
-        //         ]);
+            $oldDonneeBrute = $this->em->getRepository(DonneeBrute::class)
+                ->findOneBy([
+                    'code' => $code,
+                    'careCenter' => $careCenter,
+                    'periode' => $periode
+                ]);
     
-        //     if (!$oldDonneeBrute instanceof DonneeBrute)
-        //     {
-        //         $oldDonneeBrute = new DonneeBrute($code, $value, $periode, $type);
-        //         $oldDonneeBrute->setCareCenter($careCenter);
-        //     }
-        //     else
-        //     {
-        //         $oldDonneeBrute->setValue($value);
-        //     }
+            if (!$oldDonneeBrute instanceof DonneeBrute)
+            {
+                $oldDonneeBrute = new DonneeBrute($code, $value, $periode, $type);
+                $oldDonneeBrute->setCareCenter($careCenter);
+            }
+            else
+            {
+                $oldDonneeBrute->setValue($value);
+            }
     
-        //     $this->em->persist($oldDonneeBrute);
-        //     $this->em->flush();
+            $this->em->persist($oldDonneeBrute);
+            $this->em->flush();
     
-        //     $changes[] = "La donnée brute {$codifiedNameCode} a été lié à 1 centre de soin.";
-        // }
+            $changes[] = "La donnée brute {$codifiedNameCode} a été lié à 1 centre de soin.";
+        }
 
-        // return $changes;
-        return[];
+        return $changes;
     }
 
     /**
@@ -165,6 +167,7 @@ class PatientIncidentService
         {
             case 'xlsx':
                 $this->reader = new Xlsx();
+                dump(1);
                 break;
 
             case 'xls':
