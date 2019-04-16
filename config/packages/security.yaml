@@ -1,35 +1,24 @@
 security:
-    encoders:
-        App\Entity\Therapist\Therapist:
-            algorithm: sha512
-
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        entity_provider:
-            entity:
-                class: App\Entity\Therapist\Therapist
-                property: email
-
+        in_memory: { memory: ~ }
     firewalls:
         dev:
-            pattern:    ^/(_(profiler|wdt)|css|images|js)/
-            security:   false
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: true
 
-        # tester
-        tester_initialize:
-            pattern:    ^/api/wsse/initialize
-            security:   false
-        tester_salt:
-            pattern:    ^/api/wsse/salt
-            security:   false
-        tester_login:
-            pattern:    ^/api/wsse/login
-            security:   false
+            # activate different ways to authenticate
 
-        #WSSE
-        wsse_secured:
-            pattern:    ^/api/
-            stateless:  true
-            wsse:       true
-            anonymous:  false
-            methods:    [GET, PUT, POST, DELETE, OPTIONS]
-            provider:   entity_provider
+            # http_basic: true
+            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+
+            # form_login: true
+            # https://symfony.com/doc/current/security/form_login_setup.html
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }

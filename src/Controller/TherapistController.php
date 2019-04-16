@@ -14,7 +14,7 @@ use App\Entity\Therapist;
 
 /**
  * Class TherapistController
- * @package Api\Controller
+ * @package App\Controller
  */
 class TherapistController extends Controller
 {

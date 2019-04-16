@@ -14,7 +14,7 @@ use App\Utils\PatientService;
 
 /**
  * Class PatientController
- * @package ProjectBundle\Controller
+ * @package App\Controller
  */
 class PatientController extends Controller
 {
