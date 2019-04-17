@@ -19,4 +19,16 @@ class PatientIncidentRepository extends ServiceEntityRepository
         parent::__construct($registry, PatientIncident::class);
     }
 
+    public function getBarData($fileId)
+    {
+        $qb = $this->createQueryBuilder("pi");
+        $q = $qb->select("CONCAT( year(pi.date),'-',CONCAT('0', MONTH(pi.date)),'-',CONCAT('0', day(pi.date)) ) as date, COUNT(pi) as value")
+            ->leftJoin('pi.fileDetail', 'fd')
+            ->leftJoin('fd.file', 'f')
+            ->groupBy('date')
+            ->andWhere("f.id = :fileId")
+            ->setParameter('fileId', $fileId);
+
+        return $q->getQuery()->getResult();
+    }
 }

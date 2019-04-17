@@ -102,7 +102,6 @@ class TherapistService
     public function login(array $content)
     {
         $repository = $this->em->getRepository(Therapist::class);
-        dump($content);
         $therapist = $repository->findOneBy([
             'email' => $content['email'],
             'password' => $content['saltedPassword'],

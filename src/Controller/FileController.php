@@ -78,4 +78,24 @@ class FileController extends Controller
         return new JsonResponse(['message' => 'data deleted','status'=>Response::HTTP_OK]);
 
     }
+
+     /**
+     * @Route("/file/{fileId}", methods={"GET"})
+     * 
+     *  @param Request $request
+     * @return JsonResponse|Response
+     */
+
+    public function getDataAction($fileId, FileService $service)
+    {
+        try{
+            $service->getData($fileId);
+
+        }catch (\Exception $exception){
+            return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+
+        return new JsonResponse(['message' => 'data get','status'=>Response::HTTP_OK]);
+
+    }
 }

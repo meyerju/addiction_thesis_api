@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Reader\BaseReader;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use App\Entity\UploadedItem;
@@ -82,17 +83,16 @@ class FileService
     {
         $array = $worksheet->toArray(null, true, true, true);
         $count = 0;
-
         $file = new File($uploadedFile->getClientOriginalName(), new \DateTime(), $patient);
         $this->em->persist($file);    
 
+        $this->em->flush();
         
         foreach ($array as $key => $row)
         {
             if($key === 1){//first line
                 continue;
             }
-
             $actionTypeName = $row[$this->mappingColumns['action_type']];
             $actionType = $this->em->getRepository(ActionType::class)
             ->findOneByName($actionTypeName);
@@ -108,6 +108,7 @@ class FileService
             ->findOneBy([
                 'name' => $fileDetailName,
                 'actionType' => $actionType,
+                'file' => $file
             ]);
 
             if (!$fileDetail instanceof FileDetail)
@@ -115,8 +116,8 @@ class FileService
                 $fileDetail = new FileDetail($fileDetailName,$actionType, $file);
                 $this->em->persist($fileDetail);
             }
-            $date = new \DateTime();
-            $date->setTimestamp($row[$this->mappingColumns['date']]);
+            $date = $worksheet->getCell("A".strval($key))->getValue();
+            $date = Date::excelToDateTimeObject($date); 
             $latitude = $row[$this->mappingColumns['latitude']];
             $longitude = $row[$this->mappingColumns['longitude']];
 
@@ -124,8 +125,8 @@ class FileService
             $this->em->persist($patientIncident);
             $count ++;
 
+            $this->em->flush();
         }
-        $this->em->flush();
         return ["{$count} patient incidents were saved."];
     }
 
@@ -175,5 +176,10 @@ class FileService
         $file->setArchived(true);
         $this->em->merge($file);
         $this->em->flush();
+    }
+
+    public function getData($fileId){
+        $barData = $this->em->getRepository(PatientIncident::class)->getBarData($fileId);
+        dump($barData);
     }
 }
