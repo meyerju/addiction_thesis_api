@@ -26,7 +26,6 @@ class PatientController extends Controller
      */
     public function getAllAction($therapistId, PatientService $service)
     {
-        dump($therapistId);
         $patients = $service->findAll($therapistId);
 
         $patients = $this->get('jms_serializer')

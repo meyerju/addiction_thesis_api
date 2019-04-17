@@ -44,4 +44,18 @@ class PatientIncidentController extends Controller
         }
     }
 
+     /**
+     * @Route("/files/{patientId}", methods={"GET"})
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    function getAllAction($patientId, PatientIncidentService $service)
+    {
+        $files = $service->findAll($patientId);
+
+        $files = $this->get('jms_serializer')
+            ->serialize($files, 'json', SerializationContext::create()->setGroups(['FullFile'])->setSerializeNull(true));
+        return new Response($files);
+    }
 }

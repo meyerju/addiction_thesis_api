@@ -156,4 +156,17 @@ class PatientIncidentService
         }
 
     }
+
+    /**
+     * Get all files of a patient
+     *
+     * @return array
+     */
+    public function findAll($patientId)
+    {
+        $patient = $this->em->getRepository(Patient::class)->findOneById($patientId);
+        $files = $this->em->getRepository(File::class)->getAllOfPatient($patient);
+        $this->em->flush();
+        return $files;
+    }
 }
