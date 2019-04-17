@@ -27,11 +27,12 @@ class PatientIncidentController extends Controller
      */
     function loadAction(Request $request, PatientIncidentService $service)
     {
+        $patientId = $request->request->get('patient');
         $uploadedFile = $request->files->get('file');
         if($uploadedFile){
             try
             {
-                $changes = $service->load($uploadedFile);
+                $changes = $service->load($uploadedFile, $patientId);
             }
             catch (\Exception $exception)
             {

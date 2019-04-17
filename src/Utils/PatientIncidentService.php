@@ -56,14 +56,19 @@ class PatientIncidentService
      * @throws \Exception
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    function load($uploadedFile)
+    function load($uploadedFile, $patientId)
     {
+        $patient = $this->em->getRepository(Patient::class)
+            ->findOneBy([
+                'id' => $patientId,
+            ]);
+
         $this->guessReader($uploadedFile->getClientOriginalName());
         $this->reader->setReadDataOnly(true);
         $this->spreadsheet = $this->reader->load($uploadedFile->getRealPath());   
         $returnArray = [];
         $sheet = $this->spreadsheet->getAllSheets()[0];
-        $returnArray[] = $this->savePatientIncidents($sheet, $uploadedFile);
+        $returnArray[] = $this->savePatientIncidents($sheet, $uploadedFile, $patient);
         unset($sheet);        
       
         return $returnArray;
@@ -73,17 +78,12 @@ class PatientIncidentService
     /**
      * @param Worksheet $worksheet
      */
-    public function savePatientIncidents(Worksheet $worksheet, $uploadedFile)
+    public function savePatientIncidents(Worksheet $worksheet, $uploadedFile, Patient $patient)
     {
         $array = $worksheet->toArray(null, true, true, true);
         $count = 0;
 
-        $patient = $this->em->getRepository(Patient::class)
-            ->findOneBy([
-                'id' => 1,
-            ]);
-
-        $file = new File($uploadedFile->getClientOriginalName(), new \DateTime(), $patient);//find patient
+        $file = new File($uploadedFile->getClientOriginalName(), new \DateTime(), $patient);
         $this->em->persist($file);    
 
         
@@ -93,13 +93,9 @@ class PatientIncidentService
                 continue;
             }
 
-            dump($row);
             $actionTypeName = $row[$this->mappingColumns['action_type']];
             $actionType = $this->em->getRepository(ActionType::class)
-            ->findOneBy([
-                'name' => $actionTypeName,
-            ]);
-            dump($actionType);
+            ->findOneByName($actionTypeName);
 
             if (!$actionType instanceof ActionType)
             {
@@ -126,9 +122,11 @@ class PatientIncidentService
 
             $patientIncident = new PatientIncident($date, $latitude, $longitude, $fileDetail);
             $this->em->persist($patientIncident);
+            $count ++;
 
         }
         $this->em->flush();
+        return ["{$count} patient incidents were saved."];
     }
 
     /**
