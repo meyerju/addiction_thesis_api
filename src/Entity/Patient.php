@@ -45,9 +45,17 @@ class Patient
      */
     private $therapist;
 
+    /**
+     * @var boolean $archived
+     *
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private $archived;
+
     public function __construct($therapist)
     {
         $this->files = new ArrayCollection();
+        $this->setArchived(false);
         $this->setTherapist($therapist);
     }
 
@@ -119,6 +127,25 @@ class Patient
     public function setTherapist(?Therapist $therapist): self
     {
         $this->therapist = $therapist;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isArchived()
+    {
+        return $this->archived;
+    }
+
+    /**
+     * @param bool $archived
+     * @return User
+     */
+    public function setArchived($archived)
+    {
+        $this->archived = $archived;
 
         return $this;
     }

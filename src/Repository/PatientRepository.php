@@ -24,7 +24,9 @@ class PatientRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder("p");
         $q = $qb->where("p.therapist = :therapist")
-            ->setParameter("therapist", $therapist);
+            ->andWhere("p.archived = :archived")
+            ->setParameter("therapist", $therapist)
+            ->setParameter("archived", false);
 
         return $q->getQuery()->getResult();
     }
