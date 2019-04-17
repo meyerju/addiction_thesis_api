@@ -19,43 +19,4 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class PatientIncidentController extends Controller
 {
-    /**
-     * @Route("/file/load", methods={"POST"})
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    function loadAction(Request $request, PatientIncidentService $service)
-    {
-        $patientId = $request->request->get('patient');
-        $uploadedFile = $request->files->get('file');
-        if($uploadedFile){
-            try
-            {
-                $changes = $service->load($uploadedFile, $patientId);
-            }
-            catch (\Exception $exception)
-            {
-                return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
-            }    
-            return new Response(json_encode($changes));
-        }else{       
-            return new Response("No file", Response::HTTP_BAD_REQUEST);
-        }
-    }
-
-     /**
-     * @Route("/files/{patientId}", methods={"GET"})
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    function getAllAction($patientId, PatientIncidentService $service)
-    {
-        $files = $service->findAll($patientId);
-
-        $files = $this->get('jms_serializer')
-            ->serialize($files, 'json', SerializationContext::create()->setGroups(['FullFile'])->setSerializeNull(true));
-        return new Response($files);
-    }
 }

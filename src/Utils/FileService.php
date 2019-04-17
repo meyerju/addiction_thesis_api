@@ -18,10 +18,10 @@ use App\Entity\File;
 use App\Entity\Patient;
 
 /**
- * Class PatientIncidentService
+ * Class FileService
  * @package Utils
  */
-class PatientIncidentService
+class FileService
 {
     /**
      * @var EntityManagerInterface
@@ -43,7 +43,7 @@ class PatientIncidentService
     ];
 
     /**
-     * PatientIncidentService constructor.
+     * FileService constructor.
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -168,5 +168,12 @@ class PatientIncidentService
         $files = $this->em->getRepository(File::class)->getAllOfPatient($patient);
         $this->em->flush();
         return $files;
+    }
+
+    public function deleteFile($fileId){
+        $file = $this->em->getRepository(File::class)->findOneById($fileId);
+        $file->setArchived(true);
+        $this->em->merge($file);
+        $this->em->flush();
     }
 }

@@ -36,7 +36,7 @@ class FileDetail
     private $actionType;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PatientIncident", mappedBy="fileDetail")
+     * @ORM\OneToMany(targetEntity="App\Entity\PatientIncident", cascade={"persist"}, mappedBy="fileDetail")
      */
     private $patientIncident;
 

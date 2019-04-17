@@ -24,7 +24,10 @@ class FileRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder("f");
         $q = $qb->where("f.patient = :patient")
-            ->setParameter("patient", $patient);
+            ->andWhere("f.archived = :archived")
+            ->orderBy('f.upload_date', 'DESC')
+            ->setParameter("patient", $patient)
+            ->setParameter("archived", false);
 
         return $q->getQuery()->getResult();
     }

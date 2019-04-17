@@ -39,15 +39,23 @@ class File
     private $patient;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\FileDetail", mappedBy="file")
+     * @ORM\OneToMany(targetEntity="App\Entity\FileDetail", cascade={"persist"}, mappedBy="file")
      */
     private $fileDetails;
+
+    /**
+     * @var boolean $archived
+     *
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    private $archived;
 
     public function __construct($name, $upload_date, $patient)
     {
         $this->setName($name);
         $this->setUploadDate($upload_date);
         $this->setPatient($patient);
+        $this->setArchived(false);
         $this->fileDetails = new ArrayCollection();
     }
 
@@ -119,6 +127,25 @@ class File
                 $fileDetail->setFile(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isArchived()
+    {
+        return $this->archived;
+    }
+
+    /**
+     * @param bool $archived
+     * @return User
+     */
+    public function setArchived($archived)
+    {
+        $this->archived = $archived;
 
         return $this;
     }
