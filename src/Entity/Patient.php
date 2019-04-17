@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PatientRepository")
@@ -20,12 +21,14 @@ class Patient
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"FullPatient"})
      */
     private $addiction_name;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Person", inversedBy="patient", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"FullPatient"})
      */
     private $person;
 
@@ -35,14 +38,16 @@ class Patient
     private $files;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Therapist", inversedBy="patients")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Therapist", inversedBy="patients")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"FullPatient"})
      */
-    private $therapists;
+    private $therapist;
 
-    public function __construct()
+    public function __construct($therapist)
     {
         $this->files = new ArrayCollection();
-        $this->therapist = new ArrayCollection();
+        $this->setTherapist($therapist);
     }
 
     public function getId(): ?int
@@ -105,30 +110,14 @@ class Patient
         return $this;
     }
 
-    /**
-     * @return Collection|Therapist[]
-     */
-    public function getTherapists(): Collection
+    public function getTherapist(): ?Therapist
     {
-        return $this->therapists;
+        return $this->therapist;
     }
 
-    public function addTherapist(Therapist $therapist): self
+    public function setTherapist(?Therapist $therapist): self
     {
-        if (!$this->therapists->contains($therapist)) {
-            $this->therapists[] = $therapist;
-            $therapist->addTherapist($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTherapist(Therapist $therapist): self
-    {
-        if ($this->therapists->contains($therapist)) {
-            $this->therapists->removeElement($therapist);
-            $therapist->removeTherapist($this);
-        }
+        $this->therapist = $therapist;
 
         return $this;
     }

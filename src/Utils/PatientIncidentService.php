@@ -99,6 +99,7 @@ class PatientIncidentService
             ->findOneBy([
                 'name' => $actionTypeName,
             ]);
+            dump($actionType);
 
             if (!$actionType instanceof ActionType)
             {

@@ -20,14 +20,14 @@ class PatientController extends Controller
 {
 
     /**
-     * @Route("/patients", methods={"GET"})
+     * @Route("/patients/{therapistId}", methods={"GET"})
      *
      * @return Response
      */
-    public function getAllAction(PatientService $service)
+    public function getAllAction($therapistId, PatientService $service)
     {
-        $therapist = $this->getTherapist();
-        $patients = $service->findAll($therapist);
+        dump($therapistId);
+        $patients = $service->findAll($therapistId);
 
         $patients = $this->get('jms_serializer')
             ->serialize($patients, 'json', SerializationContext::create()->setGroups(['FullPatient'])->setSerializeNull(true));

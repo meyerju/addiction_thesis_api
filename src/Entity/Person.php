@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
@@ -18,21 +19,25 @@ class Person
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"FullPatient"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"FullPatient"})
      */
     private $surname;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"FullPatient"})
      */
     private $birth_date;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"FullPatient"})
      */
     private $gender;
 

@@ -5,7 +5,6 @@ namespace App\Utils;
 use App\Entity\Patient;
 use App\Entity\Therapist;
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\Serializer;
 
 /**
  * Class PatientService
@@ -18,28 +17,24 @@ class PatientService
      */
     protected $em;
 
-    /** @var Serializer $serializer */
-    private $serializer;
-
     /**
      * PatientService constructor.
      * @param EntityManagerInterface $entityManager
      * @param Serializer $serializer
      */
-    public function __construct(EntityManagerInterface $entityManager, Serializer $serializer)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
-        $this->serializer = $serializer;
     }
 
     /**
      * Get all patients
      *
-     * @param Therapist $therapist
      * @return array
      */
-    public function findAll(Therapist $therapist)
+    public function findAll($therapistId)
     {
+        $therapist = $this->em->getRepository(Therapist::class)->findOneById($therapistId);
         $patients = $this->em->getRepository(Patient::class)->getAllOfTherapist($therapist);
         $this->em->flush();
         return $patients;

@@ -35,7 +35,7 @@ class Therapist
     /**
      * @var string
      * @ORM\Column(type="string", length=255)
-     * @Groups({"FullTherapist"})
+     * @Groups({"FullTherapist", "FullPatient"})
      */
     protected $email;
 
@@ -55,7 +55,7 @@ class Therapist
 
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Patient", mappedBy="therapist")
+     * @ORM\OneToMany(targetEntity="App\Entity\Patient", mappedBy="therapist")
      */
     private $patients;
 
