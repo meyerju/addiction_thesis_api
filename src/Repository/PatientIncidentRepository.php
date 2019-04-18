@@ -31,4 +31,16 @@ class PatientIncidentRepository extends ServiceEntityRepository
 
         return $q->getQuery()->getResult();
     }
+
+    public function getLineData($fileId)
+    {
+        $qb = $this->createQueryBuilder("pi");
+        $q = $qb->select("CONCAT( year(pi.date),'-',CONCAT('0', MONTH(pi.date)),'-',CONCAT('0', day(pi.date)) ) as date, CONCAT( hour(pi.date),'.', minute(pi.date)) as time, fd.name as name")
+            ->leftJoin('pi.fileDetail', 'fd')
+            ->leftJoin('fd.file', 'f')
+            ->andWhere("f.id = :fileId")
+            ->setParameter('fileId', $fileId);
+
+        return $q->getQuery()->getResult();
+    }
 }

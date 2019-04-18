@@ -25,6 +25,8 @@ doctrine:
                 YEAR: DoctrineExtensions\Query\Mysql\Year
                 MONTH: DoctrineExtensions\Query\Mysql\Month
                 DAY: DoctrineExtensions\Query\Mysql\Day
+                HOUR: DoctrineExtensions\Query\Mysql\Hour
+                MINUTE: DoctrineExtensions\Query\Mysql\Minute
                 RIGHT: App\DQL\Right
         mappings:
             App:
