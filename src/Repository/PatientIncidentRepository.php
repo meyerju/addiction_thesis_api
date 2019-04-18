@@ -22,10 +22,10 @@ class PatientIncidentRepository extends ServiceEntityRepository
     public function getBarData($fileId)
     {
         $qb = $this->createQueryBuilder("pi");
-        $q = $qb->select("CONCAT( year(pi.date),'-',CONCAT('0', MONTH(pi.date)),'-',CONCAT('0', day(pi.date)) ) as date, COUNT(pi) as value")
+        $q = $qb->select("CONCAT( year(pi.date),'-',CONCAT('0', MONTH(pi.date)),'-',CONCAT('0', day(pi.date)) ) as date, COUNT(pi) as value", "fd.name as name")
             ->leftJoin('pi.fileDetail', 'fd')
             ->leftJoin('fd.file', 'f')
-            ->groupBy('date')
+            ->groupBy('name, date')
             ->andWhere("f.id = :fileId")
             ->setParameter('fileId', $fileId);
 

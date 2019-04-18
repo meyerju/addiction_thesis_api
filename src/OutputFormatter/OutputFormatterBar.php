@@ -28,6 +28,25 @@ class OutputFormatterBar
      */
     function format(array $data)
     {
-        return [];
+        $columns = [];
+        array_push($columns, ['x1']);
+        array_push($columns, ['click1']);
+        $xs = ['click1' =>'x1'];
+        $index = 0;
+        $name = $data[0]['name'];
+        foreach ($data as $key => $groupData)
+        {
+           
+            if($groupData['name'] !== $name){
+                $index +=1;
+                $name = $groupData['name'];
+                $xs['click'.($index+1)]='x'.($index+1);
+                array_push($columns, ['x'.($index+1)]);
+                array_push($columns, ['click'.($index+1)]);
+            }
+            array_push($columns[$index*2], $groupData['date']);
+            array_push($columns[$index*2+1], $groupData['value']);
+        }
+        return ["xs" => $xs, "columns"=> $columns, "type" => "bar"];
     }
 }

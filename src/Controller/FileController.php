@@ -89,13 +89,13 @@ class FileController extends Controller
     public function getDataAction($fileId, FileService $service)
     {
         try{
-            $service->getData($fileId);
+            $data = $service->getData($fileId);
 
         }catch (\Exception $exception){
             return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse(['message' => 'data get','status'=>Response::HTTP_OK]);
+        return new Response(json_encode($data));
 
     }
 }

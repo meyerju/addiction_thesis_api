@@ -17,6 +17,7 @@ use App\Entity\ActionType;
 use App\Entity\FileDetail;
 use App\Entity\File;
 use App\Entity\Patient;
+use App\OutputFormatter\OutputFormatterBar;
 
 /**
  * Class FileService
@@ -180,6 +181,7 @@ class FileService
 
     public function getData($fileId){
         $barData = $this->em->getRepository(PatientIncident::class)->getBarData($fileId);
-        dump($barData);
+        $formatter = new OutputFormatterBar();
+        return $formatter->format($barData);
     }
 }
