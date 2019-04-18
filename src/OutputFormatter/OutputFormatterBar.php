@@ -10,17 +10,19 @@ class OutputFormatterBar
      * il est cencé il y avoir qu'une seule valeur selon les critères 'from', 'to', et 'temporal field')
      * Exemple :
      * {
-     *   xs: {
-     *       'click1': 'x1',
-     *       'click2': 'x2',
-     *   },
-     *   columns: [
-     *       ['x1', 10, 30, 45, 50, 70, 100],
-     *       ['x2', 30, 50, 75, 100, 120],
-     *       ['click1', 30, 200, 100, 400, 150, 250],
-     *       ['click2', 20, 180, 240, 100, 190]
-     *   ],
-     *   type: 'bar'
+     *  data: {
+     *       "columns": [
+     *           ["click1", 7, 5, 2],
+     *           ["click2", 6, 9, 5],
+     *       ],
+     *       'type': "bar"
+     *       };
+     *  axis: {
+     *       'x': {
+     *               'type': 'category',
+     *               'categories': ["2018-03-011", "2018-04-011", "2018-05-011"],
+     *           }     
+     *       }       
      * }
      * @param array $data
      * @return array
@@ -29,24 +31,26 @@ class OutputFormatterBar
     function format(array $data)
     {
         $columns = [];
-        array_push($columns, ['x1']);
-        array_push($columns, ['click1']);
-        $xs = ['click1' =>'x1'];
-        $index = 0;
         $name = $data[0]['name'];
+        array_push($columns, [$name]);
+        dump($columns);
+        $xs = [[]];
+        $index = 0;
         foreach ($data as $key => $groupData)
         {
-           
             if($groupData['name'] !== $name){
                 $index +=1;
                 $name = $groupData['name'];
-                $xs['click'.($index+1)]='x'.($index+1);
-                array_push($columns, ['x'.($index+1)]);
-                array_push($columns, ['click'.($index+1)]);
+                array_push($columns, [$name]);
+                array_push($xs, []);
             }
-            array_push($columns[$index*2], $groupData['date']);
-            array_push($columns[$index*2+1], $groupData['value']);
+            dump($columns);
+            dump($xs);
+            array_push($xs[$index], $groupData['date']);
+            array_push($columns[$index], (int)$groupData['value']);
         }
-        return ["xs" => $xs, "columns"=> $columns, "type" => "bar"];
+        dump($xs);
+        dump($columns);
+        return ["data" => ["columns"=> $columns, "type" => "bar"], "axis"=>["x" =>['type' => 'category', "categories" => array_values($xs)[0]]]];
     }
 }

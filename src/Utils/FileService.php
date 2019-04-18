@@ -182,6 +182,6 @@ class FileService
     public function getData($fileId){
         $barData = $this->em->getRepository(PatientIncident::class)->getBarData($fileId);
         $formatter = new OutputFormatterBar();
-        return $formatter->format($barData);
+        return ["bar" => $formatter->format($barData)];
     }
 }
