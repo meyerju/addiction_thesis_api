@@ -62,6 +62,6 @@ class OutputFormatterLine
         }
         dump($columns);
         dump($xs);
-        return ["data" => ["xs" => $xs, "columns"=> $columns, "type" => "scatter"], "axis"=>["x" =>['type'=> 'category','tick' => ["fit" => false]]]];
+        return ["data" => ["xs" => $xs, "columns"=> $columns, "type" => "scatter"], "axis"=>["x" =>['label' => 'tracking days', 'type'=> 'category','tick' => ["fit" => false]], "y" =>['label' => 'hours of the day']]];
     }
 }

@@ -40,6 +40,7 @@ class File
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\FileDetail", cascade={"persist"}, mappedBy="file")
+     * @Groups({"FullFile"})
      */
     private $fileDetails;
 

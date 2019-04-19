@@ -17,9 +17,13 @@ class OutputFormatterBar
      *       };
      *  axis: {
      *       'x': {
+     *               'label': "heloo",
      *               'type': 'category',
      *               'categories': ["2018-03-011", "2018-04-011", "2018-05-011"],
-     *           }     
+     *           }    
+     *       'y': {
+     *               'label': "heloo", 
+     *           }
      *       }       
      * }
      * @param array $data
@@ -44,6 +48,6 @@ class OutputFormatterBar
             array_push($xs[$index], $groupData['date']);
             array_push($columns[$index], (int)$groupData['value']);
         }
-        return ["data" => ["columns"=> $columns, "type" => "bar"], "axis"=>["x" =>['type' => 'category', "categories" => array_values($xs)[0]]]];
+        return ["data" => ["columns"=> $columns, "type" => "bar"], "axis"=>["x" =>['label' => 'tracking days', 'type' => 'category', "categories" => array_values($xs)[0]], "y" =>['label' => 'nb of clicks']]];
     }
 }
