@@ -53,6 +53,11 @@ class OutputFormatterTimePie
                 $dataFormatted[$name][3][1] += (int)$groupData['value'];
             }
         }
-        return $dataFormatted;
+        $data = [];
+        foreach ($dataFormatted as $key => $line)
+        {
+            $data[$key] = ["data" => ["columns"=> $line, "type" => "pie"]];
+        }
+        return $data;
     }
 }
