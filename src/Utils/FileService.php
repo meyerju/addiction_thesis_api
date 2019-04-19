@@ -19,6 +19,8 @@ use App\Entity\File;
 use App\Entity\Patient;
 use App\OutputFormatter\OutputFormatterBar;
 use App\OutputFormatter\OutputFormatterLine;
+use App\OutputFormatter\OutputFormatterTable;
+use App\OutputFormatter\OutputFormatterTimePie;
 
 /**
  * Class FileService
@@ -184,8 +186,10 @@ class FileService
         $barData = $this->em->getRepository(PatientIncident::class)->getBarData($fileId);
         $barFormatter = new OutputFormatterBar();
         $lineData = $this->em->getRepository(PatientIncident::class)->getLineData($fileId);
-        dump($lineData);
         $lineFormatter = new OutputFormatterLine();
-        return ["bar" => $barFormatter->format($barData), "line" => $lineFormatter->format($lineData)];
+        $tableData = $this->em->getRepository(PatientIncident::class)->getTableData($fileId);
+        $tableFormatter = new OutputFormatterTable();
+        $timePieFormatter = new OutputFormatterTimePie();
+        return ["bar" => $barFormatter->format($barData), "line" => $lineFormatter->format($lineData), "table" => $tableFormatter->format($tableData), "timePie" => $timePieFormatter->format($tableData)];
     }
 }

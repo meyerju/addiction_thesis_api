@@ -43,4 +43,17 @@ class PatientIncidentRepository extends ServiceEntityRepository
 
         return $q->getQuery()->getResult();
     }
+
+    public function getTableData($fileId)
+    {
+        $qb = $this->createQueryBuilder("pi");
+        $q = $qb->select("hour(pi.date) as time, COUNT(pi) as value", "fd.name as name")
+            ->leftJoin('pi.fileDetail', 'fd')
+            ->leftJoin('fd.file', 'f')
+            ->groupBy('name, time')
+            ->andWhere("f.id = :fileId")
+            ->setParameter('fileId', $fileId);
+
+        return $q->getQuery()->getResult();
+    }
 }
