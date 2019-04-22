@@ -21,6 +21,7 @@ use App\OutputFormatter\OutputFormatterBar;
 use App\OutputFormatter\OutputFormatterLine;
 use App\OutputFormatter\OutputFormatterTable;
 use App\OutputFormatter\OutputFormatterTimePie;
+use App\OutputFormatter\OutputFormatterPieMap;
 
 /**
  * Class FileService
@@ -190,6 +191,9 @@ class FileService
         $tableData = $this->em->getRepository(PatientIncident::class)->getTableData($fileId);
         $tableFormatter = new OutputFormatterTable();
         $timePieFormatter = new OutputFormatterTimePie();
-        return ["bar" => $barFormatter->format($barData), "line" => $lineFormatter->format($lineData), "table" => $tableFormatter->format($tableData), "timePie" => $timePieFormatter->format($tableData)];
+        $mapData = $this->em->getRepository(PatientIncident::class)->getMapData($fileId);
+        $pieMapFormatter = new OutputFormatterPieMap();
+        $data = $pieMapFormatter->format($mapData);
+        return ["mapPie" => $pieMapFormatter->format($mapData), "bar" => $barFormatter->format($barData), "line" => $lineFormatter->format($lineData), "table" => $tableFormatter->format($tableData), "timePie" => $timePieFormatter->format($tableData)];
     }
 }

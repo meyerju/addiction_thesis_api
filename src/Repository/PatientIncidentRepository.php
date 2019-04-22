@@ -56,4 +56,16 @@ class PatientIncidentRepository extends ServiceEntityRepository
 
         return $q->getQuery()->getResult();
     }
+
+    public function getMapData($fileId)
+    {
+        $qb = $this->createQueryBuilder("pi");
+        $q = $qb->select("CONCAT( year(pi.date),'-',CONCAT('0', MONTH(pi.date)),'-',CONCAT('0', day(pi.date)) ) as date, pi.latitude as latitude, pi.longitude as longitude, fd.name as name")
+            ->leftJoin('pi.fileDetail', 'fd')
+            ->leftJoin('fd.file', 'f')
+            ->andWhere("f.id = :fileId")
+            ->setParameter('fileId', $fileId);
+
+        return $q->getQuery()->getResult();
+    }
 }

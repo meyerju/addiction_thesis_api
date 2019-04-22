@@ -42,8 +42,6 @@ class OutputFormatterLine
         array_push($columns, [$name."_x"]);
         
         $xs = [$name => $name."_x"];
-        dump($columns);
-        dump($xs);
         $index = 0;
         foreach ($data as $key => $groupData)
         {
@@ -54,14 +52,10 @@ class OutputFormatterLine
                 $xs[$name]= $name."_x";
                 array_push($columns, [$name]);
                 array_push($columns, [$name."_x"]);
-                dump($columns);
-                dump($xs);
             }
             array_push($columns[$index*2], (float)$groupData['time']);
             array_push($columns[$index*2+1], $groupData['date']);
         }
-        dump($columns);
-        dump($xs);
         return ["data" => ["xs" => $xs, "columns"=> $columns, "type" => "scatter"], "axis"=>["x" =>['label' => 'tracking days', 'type'=> 'category','tick' => ["fit" => false]], "y" =>['label' => 'hours of the day']]];
     }
 }
