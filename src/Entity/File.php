@@ -33,6 +33,18 @@ class File
     private $upload_date;
 
     /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"FullFile"})
+     */
+    private $start_date;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"FullFile"})
+     */
+    private $end_date;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="files")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -51,10 +63,12 @@ class File
      */
     private $archived;
 
-    public function __construct($name, $upload_date, $patient)
+    public function __construct($name, $upload_date, $patient, $start_date, $end_date)
     {
         $this->setName($name);
         $this->setUploadDate($upload_date);
+        $this->setStartDate($start_date);
+        $this->setEndDate($end_date);
         $this->setPatient($patient);
         $this->setArchived(false);
         $this->fileDetails = new ArrayCollection();
@@ -85,6 +99,30 @@ class File
     public function setUploadDate(\DateTimeInterface $upload_date): self
     {
         $this->upload_date = $upload_date;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->start_date;
+    }
+
+    public function setStartDate(\DateTimeInterface $start_date): self
+    {
+        $this->start_date = $start_date;
+
+        return $this;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->end_date;
+    }
+
+    public function setEndDate(\DateTimeInterface $end_date): self
+    {
+        $this->end_date = $end_date;
 
         return $this;
     }

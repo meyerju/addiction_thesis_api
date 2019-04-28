@@ -23,6 +23,7 @@ use App\OutputFormatter\OutputFormatterTable;
 use App\OutputFormatter\OutputFormatterTimePie;
 use App\OutputFormatter\OutputFormatterPieMap;
 use App\OutputFormatter\OutputFormatterMap;
+use App\OutputFormatter\OutputFormatterProgress;
 
 /**
  * Class FileService
@@ -47,6 +48,9 @@ class FileService
         "file_detail" => 'C',
         "latitude" => 'D',
         "longitude" => 'E',
+        "progress" => 'F',
+        "start_date" => 'B',
+        "end_date" => 'B',
     ];
 
     /**
@@ -89,14 +93,17 @@ class FileService
     {
         $array = $worksheet->toArray(null, true, true, true);
         $count = 0;
-        $file = new File($uploadedFile->getClientOriginalName(), new \DateTime(), $patient);
+        $startDate = array_values($array)[0][$this->mappingColumns['start_date']];
+        $endDate = array_values($array)[1][$this->mappingColumns['end_date']];
+        $file = new File($uploadedFile->getClientOriginalName(), new \DateTime(), $patient, Date::excelToDateTimeObject($startDate), Date::excelToDateTimeObject($endDate));
         $this->em->persist($file);    
 
         $this->em->flush();
         
         foreach ($array as $key => $row)
         {
-            if($key === 1){//first line
+            if(($key === 1)||($key === 2)||($key === 3)){//first lines for start and end dates
+                dump($endDate);
                 continue;
             }
             $actionTypeName = $row[$this->mappingColumns['action_type']];
@@ -126,8 +133,8 @@ class FileService
             $date = Date::excelToDateTimeObject($date); 
             $latitude = $row[$this->mappingColumns['latitude']];
             $longitude = $row[$this->mappingColumns['longitude']];
-
-            $patientIncident = new PatientIncident($date, $latitude, $longitude, $fileDetail);
+            $progress = $row[$this->mappingColumns['progress']];
+            $patientIncident = new PatientIncident($date, $latitude, $longitude, $fileDetail, $progress);
             $this->em->persist($patientIncident);
             $count ++;
 
@@ -195,6 +202,9 @@ class FileService
         $mapData = $this->em->getRepository(PatientIncident::class)->getMapData($fileId);
         $pieMapFormatter = new OutputFormatterPieMap();
         $mapFormatter = new OutputFormatterMap();
-        return ["map"=> $mapFormatter->format($mapData), "mapPie" => $pieMapFormatter->format($mapData), "bar" => $barFormatter->format($barData), "line" => $lineFormatter->format($lineData), "table" => $tableFormatter->format($tableData), "timePie" => $timePieFormatter->format($tableData)];
+        $progressData = $this->em->getRepository(PatientIncident::class)->getProgressData($fileId);
+        $periodeFile = $this->em->getRepository(File::class)->getPeriode($fileId);
+        $progressFormatter = new OutputFormatterProgress();
+        return ["step"=>$progressFormatter->format($progressData, $periodeFile), "map"=> $mapFormatter->format($mapData), "mapPie" => $pieMapFormatter->format($mapData), "bar" => $barFormatter->format($barData), "line" => $lineFormatter->format($lineData), "table" => $tableFormatter->format($tableData), "timePie" => $timePieFormatter->format($tableData)];
     }
 }

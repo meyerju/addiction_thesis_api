@@ -31,4 +31,14 @@ class FileRepository extends ServiceEntityRepository
 
         return $q->getQuery()->getResult();
     }
+
+    public function getPeriode($fileId)
+    {
+        $qb = $this->createQueryBuilder("f");
+        $q = $qb->select("CONCAT( year(f.start_date),'-',day(f.start_date),'-',MONTH(f.start_date)) as start, CONCAT( year(f.end_date),'-',day(f.end_date),'-',MONTH(f.end_date)) as end")
+            ->where("f.id = :fileId")
+            ->setParameter('fileId', $fileId);
+
+        return $q->getQuery()->getResult();
+    }
 }

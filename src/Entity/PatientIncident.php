@@ -32,17 +32,24 @@ class PatientIncident
     private $latitude;
 
     /**
+     * -1, 0 or 1
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $progress;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\FileDetail", inversedBy="patientIncident")
      * @ORM\JoinColumn(nullable=false)
      */
     private $fileDetail;
 
-    function __construct($date, $latitude, $longitude, $fileDetail)
+    function __construct($date, $latitude, $longitude, $fileDetail, $progress)
     {
         $this->setDate($date);
         $this->setLatitude($latitude);
         $this->setLongitude($longitude);
         $this->setFileDetail($fileDetail);
+        $this->setProgress($progress);
     }
 
     public function getId(): ?int
@@ -82,6 +89,18 @@ class PatientIncident
     public function setLatitude(?float $latitude): ?self
     {
         $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getProgress(): ?float
+    {
+        return $this->progress;
+    }
+
+    public function setProgress(?float $progress): ?self
+    {
+        $this->progress = $progress;
 
         return $this;
     }

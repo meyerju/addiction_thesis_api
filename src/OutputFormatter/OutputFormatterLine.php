@@ -53,8 +53,10 @@ class OutputFormatterLine
                 array_push($columns, [$name]);
                 array_push($columns, [$name."_x"]);
             }
+            $timestamp = strtotime($groupData['date']);
+            $day = date('D', $timestamp);
             array_push($columns[$index*2], (float)$groupData['time']);
-            array_push($columns[$index*2+1], $groupData['date']);
+            array_push($columns[$index*2+1], $day." - ".$groupData['date']);
         }
         return ["data" => ["xs" => $xs, "columns"=> $columns, "type" => "scatter"], "axis"=>["x" =>['label' => 'tracking days', 'type'=> 'category','tick' => ["fit" => false]], "y" =>['label' => 'hours of the day']]];
     }

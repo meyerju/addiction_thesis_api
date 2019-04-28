@@ -22,7 +22,7 @@ class PatientIncidentRepository extends ServiceEntityRepository
     public function getBarData($fileId)
     {
         $qb = $this->createQueryBuilder("pi");
-        $q = $qb->select("CONCAT( year(pi.date),'-',CONCAT('0', MONTH(pi.date)),'-',CONCAT('0', day(pi.date)) ) as date, COUNT(pi) as value", "fd.name as name")
+        $q = $qb->select("CONCAT( year(pi.date),'/',day(pi.date) ,'/',CONCAT('0', MONTH(pi.date))) as date, COUNT(pi) as value", "fd.name as name")
             ->leftJoin('pi.fileDetail', 'fd')
             ->leftJoin('fd.file', 'f')
             ->groupBy('name, date')
@@ -35,7 +35,7 @@ class PatientIncidentRepository extends ServiceEntityRepository
     public function getLineData($fileId)
     {
         $qb = $this->createQueryBuilder("pi");
-        $q = $qb->select("CONCAT( year(pi.date),'-',CONCAT('0', MONTH(pi.date)),'-',CONCAT('0', day(pi.date)) ) as date, CONCAT( hour(pi.date),'.', minute(pi.date)) as time, fd.name as name")
+        $q = $qb->select("CONCAT( year(pi.date),'/',day(pi.date) ,'/',CONCAT('0', MONTH(pi.date))) as date, CONCAT( hour(pi.date),'.', minute(pi.date)) as time, fd.name as name")
             ->leftJoin('pi.fileDetail', 'fd')
             ->leftJoin('fd.file', 'f')
             ->andWhere("f.id = :fileId")
@@ -64,6 +64,21 @@ class PatientIncidentRepository extends ServiceEntityRepository
             ->leftJoin('pi.fileDetail', 'fd')
             ->leftJoin('fd.file', 'f')
             ->andWhere("f.id = :fileId")
+            ->setParameter('fileId', $fileId);
+
+        return $q->getQuery()->getResult();
+    }
+
+    public function getProgressData($fileId)
+    {
+        $qb = $this->createQueryBuilder("pi");
+        $q = $qb->select("CONCAT( year(pi.date),'-',day(pi.date),'-',CONCAT('0', MONTH(pi.date))) as date, fd.name as name")
+            ->leftJoin('pi.fileDetail', 'fd')
+            ->leftJoin('fd.file', 'f')
+            ->groupBy('name, date')
+            ->andWhere("f.id = :fileId")
+            ->andWhere("pi.progress = :progress")
+            ->setParameter('progress', true)
             ->setParameter('fileId', $fileId);
 
         return $q->getQuery()->getResult();

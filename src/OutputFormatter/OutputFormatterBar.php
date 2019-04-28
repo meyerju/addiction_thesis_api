@@ -45,7 +45,9 @@ class OutputFormatterBar
                 array_push($columns, [$name]);
                 array_push($xs, []);
             }
-            array_push($xs[$index], $groupData['date']);
+            $timestamp = strtotime($groupData['date']);
+            $day = date('D', $timestamp);
+            array_push($xs[$index], $day." - ".$groupData['date']);
             array_push($columns[$index], (int)$groupData['value']);
         }
         return ["data" => ["columns"=> $columns, "type" => "bar"], "axis"=>["x" =>['label' => 'tracking days', 'type' => 'category', "categories" => array_values($xs)[0]], "y" =>['label' => 'nb of clicks']]];
