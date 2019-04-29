@@ -35,13 +35,16 @@ class OutputFormatterProgress
                 array_push($columns, [$name]);
             }
         }    
-
+        $xs = [[]];
         foreach ($columns as $keyName => $groupName)
             {    
                 foreach (range(0, $nbPeriode) as $number) {
                 
                     $isIn = false;
                     $date = date('Y-m-d', strtotime($periode[0]["start"]. ' + '.$number.' days'));
+                    $timestamp = strtotime($date);
+                    $day = date('D', $timestamp);
+                    array_push($xs[$keyName], $day." - ".$date);
                     foreach ($data as $key => $groupData)
                     {
                         if(($date == $groupData['date']) && ($groupName[0] == $groupData['name'])){
@@ -64,6 +67,6 @@ class OutputFormatterProgress
                 
         }
             
-    return ["data" => ["columns"=> $columns, "type" => "step"]];
+    return ["data" => ["columns"=> $columns, "type" => "step"], "axis"=>["x" =>['label' => 'tracking days', 'type' => 'category', "categories" => array_values($xs)[0]]]];
     }
 }
