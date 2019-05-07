@@ -38,18 +38,25 @@ class PatientIncident
     private $progress;
 
     /**
+     * 0, 1, 2 or 3
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $scaleValue;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\FileDetail", inversedBy="patientIncident")
      * @ORM\JoinColumn(nullable=false)
      */
     private $fileDetail;
 
-    function __construct($date, $latitude, $longitude, $fileDetail, $progress)
+    function __construct($date, $latitude, $longitude, $fileDetail, $progress, $scaleValue)
     {
         $this->setDate($date);
         $this->setLatitude($latitude);
         $this->setLongitude($longitude);
         $this->setFileDetail($fileDetail);
         $this->setProgress($progress);
+        $this->setScaleValue($scaleValue);
     }
 
     public function getId(): ?int
@@ -101,6 +108,18 @@ class PatientIncident
     public function setProgress(?float $progress): ?self
     {
         $this->progress = $progress;
+
+        return $this;
+    }
+
+    public function getScaleValue(): ?float
+    {
+        return $this->scaleValue;
+    }
+
+    public function setScaleValue(?float $scaleValue): ?self
+    {
+        $this->scaleValue = $scaleValue;
 
         return $this;
     }

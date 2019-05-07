@@ -67,6 +67,6 @@ class OutputFormatterProgress
                 
         }
             
-    return ["data" => ["columns"=> $columns, "type" => "step"], "axis"=>["x" =>['label' => 'tracking days', 'type' => 'category', "categories" => array_values($xs)[0]]]];
+    return ["data" => ["columns"=> $columns, "type" => "step"], "axis"=>["x" =>[ 'show'=>true, 'label' => 'tracking days', 'type' => 'category', "categories" => array_values($xs)[0]]]];
     }
 }

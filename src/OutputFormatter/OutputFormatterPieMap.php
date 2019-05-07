@@ -68,7 +68,7 @@ class OutputFormatterPieMap
             {
                 array_push($columns, [$street, $number]);
             }
-            $data[$key] = ["data" => ["columns"=> $columns, "type" => "pie"]];
+            $data[$key] = ["data" => ["columns"=> $columns, "type" => "donut"]];
         }
         return $data;
     }

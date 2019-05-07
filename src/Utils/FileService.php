@@ -19,11 +19,15 @@ use App\Entity\File;
 use App\Entity\Patient;
 use App\OutputFormatter\OutputFormatterBar;
 use App\OutputFormatter\OutputFormatterLine;
+use App\OutputFormatter\OutputFormatterReversedLine;
 use App\OutputFormatter\OutputFormatterTable;
+use App\OutputFormatter\OutputFormatterHoursBar;
+use App\OutputFormatter\OutputFormatterPeriodeBar;
 use App\OutputFormatter\OutputFormatterTimePie;
 use App\OutputFormatter\OutputFormatterPieMap;
 use App\OutputFormatter\OutputFormatterMap;
 use App\OutputFormatter\OutputFormatterProgress;
+use App\OutputFormatter\OutputFormatterHeatMap;
 
 /**
  * Class FileService
@@ -49,6 +53,7 @@ class FileService
         "latitude" => 'D',
         "longitude" => 'E',
         "progress" => 'F',
+        "scaleValue" => 'G',
         "start_date" => 'B',
         "end_date" => 'B',
     ];
@@ -95,6 +100,8 @@ class FileService
         $count = 0;
         $startDate = array_values($array)[0][$this->mappingColumns['start_date']];
         $endDate = array_values($array)[1][$this->mappingColumns['end_date']];
+        dump(Date::excelToDateTimeObject($startDate));
+        dump(Date::excelToDateTimeObject($endDate));
         $file = new File($uploadedFile->getClientOriginalName(), new \DateTime(), $patient, Date::excelToDateTimeObject($startDate), Date::excelToDateTimeObject($endDate));
         $this->em->persist($file);    
 
@@ -103,7 +110,6 @@ class FileService
         foreach ($array as $key => $row)
         {
             if(($key === 1)||($key === 2)||($key === 3)){//first lines for start and end dates
-                dump($endDate);
                 continue;
             }
             $actionTypeName = $row[$this->mappingColumns['action_type']];
@@ -134,7 +140,9 @@ class FileService
             $latitude = $row[$this->mappingColumns['latitude']];
             $longitude = $row[$this->mappingColumns['longitude']];
             $progress = $row[$this->mappingColumns['progress']];
-            $patientIncident = new PatientIncident($date, $latitude, $longitude, $fileDetail, $progress);
+            $scaleValue = $row[$this->mappingColumns['scaleValue']];
+            dump($row[$this->mappingColumns['scaleValue']]);
+            $patientIncident = new PatientIncident($date, $latitude, $longitude, $fileDetail, $progress, $scaleValue);
             $this->em->persist($patientIncident);
             $count ++;
 
@@ -194,17 +202,32 @@ class FileService
     public function getData($fileId){
         $barData = $this->em->getRepository(PatientIncident::class)->getBarData($fileId);
         $barFormatter = new OutputFormatterBar();
-        $lineData = $this->em->getRepository(PatientIncident::class)->getLineData($fileId);
-        $lineFormatter = new OutputFormatterLine();
+        // $lineData = $this->em->getRepository(PatientIncident::class)->getLineData($fileId);
+        // $lineFormatter = new OutputFormatterLine();
         $tableData = $this->em->getRepository(PatientIncident::class)->getTableData($fileId);
-        $tableFormatter = new OutputFormatterTable();
+        $tableFormatter = new OutputFormatterHoursBar();
         $timePieFormatter = new OutputFormatterTimePie();
-        $mapData = $this->em->getRepository(PatientIncident::class)->getMapData($fileId);
-        $pieMapFormatter = new OutputFormatterPieMap();
-        $mapFormatter = new OutputFormatterMap();
-        $progressData = $this->em->getRepository(PatientIncident::class)->getProgressData($fileId);
+        $periodeBarFormatter = new OutputFormatterPeriodeBar();
+        $heatMapData = $this->em->getRepository(PatientIncident::class)->getHeatMapData($fileId);
+        $heatMapFormatter = new OutputFormatterHeatMap();
+        $bubbleData = $this->em->getRepository(PatientIncident::class)->getBubbleData($fileId);
+        $bubbleFormatter = new OutputFormatterReversedLine();
+        // $mapData = $this->em->getRepository(PatientIncident::class)->getMapData($fileId);
+        // $pieMapFormatter = new OutputFormatterPieMap();
+        // $mapFormatter = new OutputFormatterMap();
+        // $progressData = $this->em->getRepository(PatientIncident::class)->getProgressData($fileId);
         $periodeFile = $this->em->getRepository(File::class)->getPeriode($fileId);
-        $progressFormatter = new OutputFormatterProgress();
-        return ["step"=>$progressFormatter->format($progressData, $periodeFile), "map"=> $mapFormatter->format($mapData), "mapPie" => $pieMapFormatter->format($mapData), "bar" => $barFormatter->format($barData), "line" => $lineFormatter->format($lineData), "table" => $tableFormatter->format($tableData), "timePie" => $timePieFormatter->format($tableData)];
+        // $progressFormatter = new OutputFormatterProgress();
+        return [
+            // "step"=>$progressFormatter->format($progressData, $periodeFile), 
+            // "map"=> $mapFormatter->format($mapData), 
+            // "mapPie" => $pieMapFormatter->format($mapData), 
+            "bar" => $barFormatter->format($barData), 
+            "table" => $tableFormatter->format($tableData),  
+            "periodeBar" => $periodeBarFormatter->format($tableData),
+            "timePie" => $timePieFormatter->format($tableData),
+            "heatMap" => $heatMapFormatter->format($heatMapData, $periodeFile),
+            "bubble" => $bubbleFormatter->format($bubbleData, $periodeFile),
+        ];
     }
 }

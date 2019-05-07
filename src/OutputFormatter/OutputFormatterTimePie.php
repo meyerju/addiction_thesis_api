@@ -47,7 +47,7 @@ class OutputFormatterTimePie
             if(12 < $indexHour &&  $indexHour <= 18){ //afternoon
                 $dataFormatted[$name][1][1] += (int)$groupData['value'];
             }
-            if(18 < $indexHour &&  $indexHour <= 0){ //evening
+            if(18 < $indexHour &&  $indexHour <= 24){ //evening
                 $dataFormatted[$name][2][1] += (int)$groupData['value'];
             }else{ //night
                 $dataFormatted[$name][3][1] += (int)$groupData['value'];
@@ -56,7 +56,7 @@ class OutputFormatterTimePie
         $data = [];
         foreach ($dataFormatted as $key => $line)
         {
-            $data[$key] = ["data" => ["columns"=> $line, "type" => "pie"]];
+            $data[$key] = ["data" => ["columns"=> $line, "type" => "donut"]];
         }
         return $data;
     }
