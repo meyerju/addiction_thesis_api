@@ -31,40 +31,37 @@ class OutputFormatterReversedLine
             $timestamp = strtotime($date);
             $day = date('D', $timestamp);
             array_push($days, $day." - ".$date);
-            foreach (range(0,23) as $hour) {
+            foreach (range(0,24) as $hour) {
                 array_push($columns[$index]["data"],[$hour,(int)$number+1, 0]);
             }
         }
 
-        $indexHour = 1;
+        $indexDay = 1;
         $time = $data[0]['date'];
         foreach ($data as $key => $groupData)
         {
             if($groupData['name'] !== $columns[$index]["name"]){
                 $time = $groupData['date'];
                 $index ++;
-                $indexHour = 1;
+                $indexDay = 1;
                 $name = $groupData['name'];
                 array_push($columns, ["name" => $name, "data"=> []]);
                 foreach (range(0, $nbPeriode) as $number) {
-                    foreach (range(0, 23) as $hour) {
+                    foreach (range(0,24) as $hour) {
                         array_push($columns[$index]["data"],[$hour, (int)$number+1, 0]);
                     }
                 }
             }
             if($time !== $groupData['date']){
                 $time = $groupData['date'];
-                $indexHour ++;
+                $indexDay ++;
             }
             $hour = (float)$groupData['time'];
-            if($hour === 0){
-                $hour = 24;
-            }
             $value = (int)$groupData['value'];
             if($value === 0){
                 $value = 1;
             }
-            $columns[$index]["data"][(int)$indexHour*(int)$hour] = [$hour, $indexHour, $value%4];
+            $columns[$index]["data"][(int)($indexDay-1)*24+(int)$hour-1] = [$hour, $indexDay, $value%4];
         }
         return ["data" => $columns, "days" => $days];
     }
