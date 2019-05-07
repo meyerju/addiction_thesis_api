@@ -60,7 +60,8 @@ class OutputFormatterPeriodeBar
             }
             if(18 < $indexHour &&  $indexHour <= 24){ //evening
                 $dataFormatted[$index][3] += (int)$groupData['value'];
-            }else{ //night
+            } 
+            if($indexHour <= 6){//night
                 $dataFormatted[$index][4] += (int)$groupData['value'];
             }
         }

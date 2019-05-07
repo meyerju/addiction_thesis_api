@@ -29,14 +29,13 @@ class OutputFormatterTimePie
      */
     function format(array $data)
     {
+        dump($data);
         $dataFormatted = [];
         $name = $data[0]['name'];
         $dataFormatted[$name] = [["morning",0], ["afternoon",0], ["evening",0], ["night",0]];
-        $index = 0;
         foreach ($data as $key => $groupData)
         {
             if($groupData['name'] !== $name){
-                $index +=1;
                 $name = $groupData['name'];
                 $dataFormatted[$name] = [["morning",0], ["afternoon",0], ["evening",0], ["night",0]];
             }
@@ -49,7 +48,8 @@ class OutputFormatterTimePie
             }
             if(18 < $indexHour &&  $indexHour <= 24){ //evening
                 $dataFormatted[$name][2][1] += (int)$groupData['value'];
-            }else{ //night
+            }
+            if($indexHour<= 6){ //night
                 $dataFormatted[$name][3][1] += (int)$groupData['value'];
             }
         }

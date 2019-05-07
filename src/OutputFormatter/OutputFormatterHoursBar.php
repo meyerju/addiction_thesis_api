@@ -53,7 +53,7 @@ class OutputFormatterHoursBar
                 array_push($dataFormatted, $line);
             }
             $indexHour = (int)$groupData['time'];
-            $dataFormatted[$index][$indexHour] = (int)$groupData['value'];
+            $dataFormatted[$index][$indexHour+1] = (int)$groupData['value'];
         }
 
         return ["data" => ["columns"=> $dataFormatted, "type" => "bar"], "axis"=>["x" =>['label' => 'hours', 'type' => 'category', "categories" => $time], "y" =>['label' => 'nb of clicks']]];
