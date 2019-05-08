@@ -136,12 +136,14 @@ class FileService
                 $this->em->persist($fileDetail);
             }
             $date = $worksheet->getCell("A".strval($key))->getValue();
-            $date = Date::excelToDateTimeObject($date); 
+            $date = date("Y-m-d H:i:s", substr(round($date)+7200, 0, 10));
+            $date = new \DateTime($date); 
+            dump($date);
             $latitude = $row[$this->mappingColumns['latitude']];
             $longitude = $row[$this->mappingColumns['longitude']];
             $progress = $row[$this->mappingColumns['progress']];
             $scaleValue = $row[$this->mappingColumns['scaleValue']];
-            dump($row[$this->mappingColumns['scaleValue']]);
+            dump($date);
             $patientIncident = new PatientIncident($date, $latitude, $longitude, $fileDetail, $progress, $scaleValue);
             $this->em->persist($patientIncident);
             $count ++;
