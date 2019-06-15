@@ -28,6 +28,7 @@ class OutputFormatterHeatMap
         
         foreach (range(0, $nbPeriode) as $number) {
             $date = date('Y-m-d', strtotime($periode[0]["start"]. ' + '.$number.' days'));
+            dump($date);
             $timestamp = strtotime($date);
             $day = date('D', $timestamp);
             array_push($days, $day." - ".$date);

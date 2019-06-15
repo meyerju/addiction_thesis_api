@@ -32,6 +32,7 @@ class OutputFormatterBar
      */
     function format(array $data)
     {
+        dump($data);
         $columns = [];
         $name = $data[0]['name'];
         array_push($columns, [$name]);
@@ -47,6 +48,8 @@ class OutputFormatterBar
             }
             $timestamp = strtotime($groupData['date']);
             $day = date('D', $timestamp);
+            dump($day);
+            dump($groupData['date']);
             array_push($xs[$index], $day." - ".$groupData['date']);
             array_push($columns[$index], (int)$groupData['value']);
         }

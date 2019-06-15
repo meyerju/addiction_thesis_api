@@ -26,6 +26,7 @@ class PatientIncidentRepository extends ServiceEntityRepository
             ->leftJoin('pi.fileDetail', 'fd')
             ->leftJoin('fd.file', 'f')
             ->groupBy('name, date')
+            ->orderBy('date')
             ->andWhere("f.id = :fileId")
             ->setParameter('fileId', $fileId);
 

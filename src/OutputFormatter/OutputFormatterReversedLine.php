@@ -38,8 +38,10 @@ class OutputFormatterReversedLine
 
         $indexDay = 1;
         $time = $data[0]['date'];
+        dump($days);
         foreach ($data as $key => $groupData)
         {
+            dump($groupData);
             if($groupData['name'] !== $columns[$index]["name"]){
                 $time = $groupData['date'];
                 $index ++;
@@ -58,11 +60,14 @@ class OutputFormatterReversedLine
             }
             $hour = (float)$groupData['time'];
             $value = (int)$groupData['value'];
+            dump($hour);
+            dump($value);
             if($value === 0){
                 $value = 1;
             }
             $columns[$index]["data"][(int)($indexDay-1)*24+(int)$hour-1] = [$hour, $indexDay, $value%4];
         }
+        dump($columns);
         return ["data" => $columns, "days" => $days];
     }
 }

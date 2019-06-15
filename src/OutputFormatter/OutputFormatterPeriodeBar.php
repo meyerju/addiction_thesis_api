@@ -32,7 +32,7 @@ class OutputFormatterPeriodeBar
     function format(array $data)
     {
         $dataFormatted = [];
-        $time = ["morning (6H to 12H)","afternoon (12H to 18H)","evening (18H to 00H)","night(00H to 6H)"];
+        $time = ["6H to 12H (morning)","12H to 18H (afternoon)","18H to 00H (evening)","00H to 6H (night)"];
         $name = $data[0]['name'];
         $line = [$name];
         foreach (range(0, 3) as $number) {

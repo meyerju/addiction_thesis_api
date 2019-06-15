@@ -31,6 +31,7 @@ class OutputFormatterHoursBar
      */
     function format(array $data)
     {
+        dump($data);
         $dataFormatted = [];
         $time = [];
         $name = $data[0]['name'];
@@ -56,6 +57,7 @@ class OutputFormatterHoursBar
             $dataFormatted[$index][$indexHour+1] = (int)$groupData['value'];
         }
 
+        dump(["data" => ["columns"=> $dataFormatted, "type" => "bar"], "axis"=>["x" =>['label' => 'hours', 'type' => 'category', "categories" => $time], "y" =>['label' => 'nb of clicks']]]);
         return ["data" => ["columns"=> $dataFormatted, "type" => "bar"], "axis"=>["x" =>['label' => 'hours', 'type' => 'category', "categories" => $time], "y" =>['label' => 'nb of clicks']]];
     }
 }

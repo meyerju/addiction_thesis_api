@@ -32,12 +32,12 @@ class OutputFormatterTimePie
         dump($data);
         $dataFormatted = [];
         $name = $data[0]['name'];
-        $dataFormatted[$name] = [["morning",0], ["afternoon",0], ["evening",0], ["night",0]];
+        $dataFormatted[$name] = [["6H to 12H (morning)",0], ["12H to 18H (afternoon)",0], ["18H to 00H (evening)",0], ["00H to 6H (night)",0]];
         foreach ($data as $key => $groupData)
         {
             if($groupData['name'] !== $name){
                 $name = $groupData['name'];
-                $dataFormatted[$name] = [["morning",0], ["afternoon",0], ["evening",0], ["night",0]];
+                $dataFormatted[$name] = [["6H to 12H (morning)",0], ["12H to 18H (afternoon)",0], ["18H to 00H (evening)",0], ["00H to 6H (night)",0]];
             }
             $indexHour = (int)$groupData['time'];
             if(6 < $indexHour &&  $indexHour<= 12){ //morning
